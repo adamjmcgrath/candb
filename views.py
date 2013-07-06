@@ -8,40 +8,12 @@ import logging
 import models
 import os
 
+DEBUG = os.environ.get('SERVER_SOFTWARE','').startswith('Development')
 
-class ShowWines(webapp.RequestHandler):
+
+class Main(webapp.RequestHandler):
   def get(self):
-    orderby = self.request.get('orderby')
-    direction = self.request.get('direction')
-    cursor = self.request.get('cursor')
-    if (orderby and orderby in ['price_per_bottle', 'vintage', 'date'] and direction and direction in ['asc', 'desc']):
-      gql = 'ORDER BY %s %s, %s' % (orderby, direction.upper(), 'price_per_bottle' if orderby == 'vintage' else 'vintage')
-    else:
-      gql = 'ORDER BY date DESC, vintage'
-
-    q = models.Wine.gql(gql)
-
-    if cursor:
-      q.with_cursor(start_cursor=cursor)
-
-    template_values = {
-      'wines': q.fetch(20),
-      'cursor': q.cursor(),
-      'orderby': orderby,
-      'direction': direction,
-    }
-    path = os.path.join(os.path.dirname(__file__), 'home.html')
-    self.response.out.write(template.render(path, template_values))
-
-
-class Wine(webapp.RequestHandler):
-  def get(self, key):
-    template_values = {
-      'wine': models.Wine.get(key),
-    }
-    path = os.path.join(os.path.dirname(__file__), 'wine.html')
-    self.response.out.write(template.render(path, template_values))
-
+    print 'foo'
 
 class SendEmail(webapp.RequestHandler):
   def get(self):
@@ -56,10 +28,13 @@ class SendEmail(webapp.RequestHandler):
         'wines': wine_arr,
         'is_email': True
       }
-      path = os.path.join(os.path.dirname(__file__), 'wines.html')
-      mail.send_mail(sender="adamjmcgrath@gmail.com",
-                     to="adamjmcgrath@gmail.com, Thomas.Holmes@miller-insurance.com, SHolmes@imgworld.com",
-                     subject="New wines on Corney & Barrow",
-                     body="View in HTML",
+      to = 'adamjmcgrath@gmail.com'
+      if not DEBUG:
+        to += ', Thomas.Holmes@miller-insurance.com, SHolmes@imgworld.com'
+      path = os.path.join(os.path.dirname(__file__), 'templates/email.html')
+      mail.send_mail(sender='adamjmcgrath@gmail.com',
+                     to=to,
+                     subject='New wines on Corney & Barrow',
+                     body='View in HTML',
                      html=template.render(path, template_values))
       logging.info('email sent')

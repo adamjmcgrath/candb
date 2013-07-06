@@ -21,13 +21,9 @@ from google.appengine.ext.webapp import util
 import tasks
 import views
 
-webapp.template.register_template_library('django.contrib.humanize.templatetags.humanize')
-
-
 def main():
   application = webapp.WSGIApplication([
-      ('/', views.ShowWines),
-      ('/wine/(.+)', views.Wine),
+      ('/', views.Main),
       ('/sendemail', views.SendEmail),
       ('/getwines', tasks.GetWines),
   ],debug=True)
