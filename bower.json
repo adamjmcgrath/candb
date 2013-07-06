@@ -1,0 +1,9 @@
+{
+  "name": "candbupdates",
+  "version": "1",
+  "main": "static/main.css",
+  "dependencies": {
+    "backbone": "latest",
+    "requirejs": "latest"
+  }
+}
