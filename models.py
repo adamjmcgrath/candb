@@ -2,6 +2,7 @@
 
 from google.appengine.ext import db
 
+
 class Wine(db.Model):
   date = db.DateProperty(auto_now=True)
   country_region = db.StringProperty()
@@ -23,10 +24,7 @@ class Wine(db.Model):
   is_new = db.BooleanProperty()
   price_per_bottle = db.FloatProperty()
 
-#for row in models.Wine.all().filter('price_per_bottle !=', None):
-#  price_per = row.price_per.strip().upper()
-#  total_price = float(row.price_duty_paid_inc_vat)
-#  row.price_per_bottle = total_price
-#  if price_per.startswith('CASE'):
-#    row.price_per_bottle = total_price / float(row.unit_per_case)
-#  row.put()
+  def to_dict(self):
+     d = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+     d['id'] = self.key().name()
+     return d

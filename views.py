@@ -8,16 +8,20 @@ import logging
 import models
 import os
 
-DEBUG = os.environ.get('SERVER_SOFTWARE','').startswith('Development')
+DEBUG = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 
 class Main(webapp.RequestHandler):
   def get(self):
-    print 'foo'
+    html = template.render(os.path.join(os.path.dirname(__file__),
+                                        'templates/main.html'), {})
+    self.response.out.write(html)
+
 
 class SendEmail(webapp.RequestHandler):
   def get(self):
-    wines = models.Wine.gql('WHERE is_new = True ORDER BY date DESC, vintage').fetch(500)
+    wines = models.Wine.gql(
+                'WHERE is_new = True ORDER BY date DESC, vintage').fetch(500)
     wine_arr = []
     for wine in wines:
       wine.is_new = False

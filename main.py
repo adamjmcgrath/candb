@@ -18,6 +18,7 @@ from google.appengine.ext import deferred
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
+import api
 import tasks
 import views
 
@@ -26,6 +27,8 @@ def main():
       ('/', views.Main),
       ('/sendemail', views.SendEmail),
       ('/getwines', tasks.GetWines),
+      ('/wine', api.WineListHandler),
+      # ('/wine/(.+)', api.WineHandler),
   ],debug=True)
   util.run_wsgi_app(application)
 
